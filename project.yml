@@ -1,0 +1,106 @@
+name: DemoAppXcodeGen
+
+options:
+  deploymentTarget:
+    iOS: 14.0
+  # findCarthageFrameworks: true # 余計なフレームワークまで追加されてしまうためコメントアウト
+  carthageExecutablePath: mint run Carthage/Carthage carthage
+
+# packages:
+#   Rswift:
+#     url: https://github.com/mac-cain13/R.swift.Library
+#     version: 5.4.0
+
+configs:
+  ProductionDebug: debug
+  ProductionRelease: release
+
+schemes:
+  DemoAppXcodeGen:
+    build:
+      targets:
+        DemoAppXcodeGen: all
+    test:
+      config: ProductionDebug
+      coverageTargets:
+        - DemoAppXcodeGen
+      gatherCoverageData: true
+      targets:
+        - name: DemoAppXcodeGenTests
+          parallelizable: true
+          randomExecutionOrder: true
+    run:
+      config: ProductionDebug
+    profile:
+      config: ProductionRelease
+    analyze:
+      config: ProductionDebug
+    archive:
+      config: ProductionRelease
+
+settings:
+  base:
+    CODE_SIGN_STYLE: Manual
+    CURRENT_PROJECT_VERSION: 1
+    INFOPLIST_FILE: DemoAppXcodeGen/Info.plist
+    MARKETING_VERSION: 1.0.0
+    PRODUCT_BUNDLE_IDENTIFIER: com.yyokii.DemoAppXcodeGen
+  configs:
+    ProductionDebug:
+      DISPLAY_NAME: DemoAppXcodeGen
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG PRODUCTION
+    ProductionRelease:
+      DISPLAY_NAME: DemoAppXcodeGen
+      CURRENT_PROJECT_VERSION: 1
+      MARKETING_VERSION: 1.0.0
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: PRODUCTION
+
+targets:
+  DemoAppXcodeGen:
+    type: application
+    platform: iOS
+    sources:
+      - path: DemoAppXcodeGen
+    dependencies:
+      - target: DemoAppXcodeGenWidget
+
+  DemoAppXcodeGenWidget: # Widget Extension
+    type: app-extension
+    platform: iOS
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: WidgetBackground
+        CURRENT_PROJECT_VERSION: 1
+        INFOPLIST_FILE: DemoAppXcodeGenWidget/Info.plist
+        MARKETING_VERSION: 1.0.0 
+        PRODUCT_BUNDLE_IDENTIFIER: com.yyokii.DemoAppXcodeGen.DemoAppXcodeGenWidget
+        PRODUCT_NAME: $(TARGET_NAME)
+        SKIP_INSTALL: true
+    sources:
+      - DemoAppXcodeGenWidget
+    dependencies:
+      - sdk: SwiftUI.framework
+      - sdk: WidgetKit.framework
+
+  DemoAppXcodeGenTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - DemoAppXcodeGenTests
+    settings:
+      base:
+        INFOPLIST_FILE: DemoAppXcodeGenTests/Info.plist
+    dependencies:
+      - target: DemoAppXcodeGen
+
+  DemoAppXcodeGenUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - DemoAppXcodeGenUITests
+    settings:
+      base:
+        INFOPLIST_FILE: DemoAppXcodeGenUITests/Info.plist
+    dependencies:
+      - target: DemoAppXcodeGen
